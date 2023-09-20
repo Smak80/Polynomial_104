@@ -2,6 +2,7 @@ package ru.smak.polynomial104
 
 import ru.smak.polynomial104.math.Polynomial
 import ru.smak.polynomial104.math.eq
+import kotlin.math.ulp
 
 fun main() {
     val p1 = Polynomial(mapOf(-1 to 5.0, 2 to -3.0, 5 to 1.0))
@@ -27,6 +28,8 @@ fun main() {
     val b = 0.8 - 0.1
     println(a.eq(b))
     println("a = $a, b = $b")
+    println(1e20*a/3.0)
+    println(0.0.ulp)
     // val divisor = 2
 
     //val result = polynomial.map { it/divisor }

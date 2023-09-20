@@ -1,17 +1,15 @@
 package ru.smak.polynomial104.math
 
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.pow
+import kotlin.math.ulp
 
 class Polynomial(coeffs: Map<Int, Double>) {
     private val _coeffs: MutableMap<Int, Double>
 
-
-    /* ---
-    var a = 1
-    var b = 4 */
     init {
-        _coeffs = coeffs.filter { (k, v) -> v != 0.0 && k >= 0 }.toMutableMap()
+        _coeffs = coeffs.filter { (k, v) -> v neq 0.0 && k >= 0 }.toMutableMap()
         if (_coeffs.isEmpty()) _coeffs[0] = 0.0
     }
 
@@ -23,7 +21,7 @@ class Polynomial(coeffs: Map<Int, Double>) {
 
 
     operator fun div(scalar: Double) =
-        Polynomial(_coeffs.map { (k, v) -> if (scalar == 0.0) throw ArithmeticException("Division by zero") else k to 1.0 / scalar * v }
+        Polynomial(_coeffs.map { (k, v) -> if (scalar eq 0.0) throw ArithmeticException("Division by zero") else k to 1.0 / scalar * v }
             .toMap())
 
     operator fun plus(other: Polynomial) = Polynomial(_coeffs.toMutableMap().also {
@@ -51,8 +49,8 @@ class Polynomial(coeffs: Map<Int, Double>) {
     fun toString(arg:String) = buildString {
 
         _coeffs.toSortedMap(reverseOrder()).forEach { (k, v) ->
-            append(if (v >= 0.0) if (_coeffs.keys.max() == k) "" else "+" else "-")
-            if (abs(v) != 1.0 || k == 0 ) append(abs(v))
+            append(if (v > 0.0 || v.eq(0.0, 1e-12)) if (_coeffs.keys.max() == k) "" else "+" else "-")
+            if (abs(v) neq 1.0 || k == 0 ) append(abs(v))
             if(k > 0) {
                 append(arg)
                 if (k > 1) append("^$k")
@@ -63,3 +61,9 @@ class Polynomial(coeffs: Map<Int, Double>) {
 }
 
 fun Double.eq(other: Double, eps: Double) = abs(this - other) < eps
+
+infix fun Double.eq(other: Double) = abs(this - other) < max(ulp, other.ulp) * 10.0
+
+fun Double.neq(other: Double, eps: Double) = !this.eq(other, eps)
+
+infix fun Double.neq(other: Double) = !this.eq(other)
